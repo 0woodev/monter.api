@@ -32,6 +32,15 @@ class PostgresUtil:
 
         return map(lambda x: dict(zip(columns, x)), rows)
 
+    def insert_query(self, query_string, args):
+        if self.conn is None:
+            raise MonterException(CommonResultCode.DB_CONNECTION_ERROR)
+
+        with self.conn.cursor() as cur:
+            cur.execute(query_string, args)
+            self.conn.commit()
+            cur.close()
+
 
 pg_util = PostgresUtil()
 
