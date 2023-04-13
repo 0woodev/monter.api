@@ -5,8 +5,7 @@ from http import HTTPStatus
 from common.CommonResultCode import CommonResultCode
 from common.Json import Json
 from common.MonterException import MonterException
-from common.const import ConstHttp
-
+from common.const import ConstHttp, MonterResponseBody
 
 import logging
 
@@ -32,7 +31,10 @@ def build_response(response_object: dict):
     try:
         response = init_json_response()
 
-        monter_response_body = {}
+        monter_response_body = {
+            MonterResponseBody.STATUS_CODE: HTTPStatus.OK,
+            MonterResponseBody.MESSAGE: "success"
+        }
         if response_object is not None:
             monter_response_body["data"] = response_object
 

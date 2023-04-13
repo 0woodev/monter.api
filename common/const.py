@@ -67,3 +67,9 @@ class ConstHttp:
     APPLICATION_JSON = "application/json"
     BODY = "body"
 
+
+class MonterResponseBody:
+    STATUS_CODE = "statusCode"
+    MESSAGE = "message"
+    DATA = "data"
+
