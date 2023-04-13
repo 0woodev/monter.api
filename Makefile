@@ -8,11 +8,11 @@ t%:
 	cd ../terraform && make ${target}
 
 setup: venv clear-makefile link-makefile
-	./venv/bin/pip3 install --upgrade pip
-	./venv/bin/pip3 install -r requirements.txt
+	./.venv/bin/pip3 install --upgrade pip
+	./.venv/bin/pip3 install -r requirements.txt
 
 venv:
-	python3 -m venv ./venv
+	python3 -m venv ./.venv
 
 destroy:
 	rm -rf ./venv

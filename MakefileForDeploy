@@ -1,7 +1,7 @@
 $(eval CURRENT_PATH=$(PWD))
 $(eval ROOT_DIR=$(realpath ${CURRENT_PATH}/../../))
 $(eval DOMAIN_PATH=$(realpath ${CURRENT_PATH}/../))
-$(eval VENV_DIR=$(realpath ${ROOT_DIR}/venv/))
+$(eval VENV_DIR=$(realpath ${ROOT_DIR}/.venv/))
 $(eval CURRENT_RELATED_PATH=$(subst ${ROOT_DIR}/,,${CURRENT_PATH}))
 $(eval DOMAIN_RELATED_PATH=$(subst ${ROOT_DIR}/,,${DOMAIN_PATH}))
 $(eval CURRENT_PATH_NAME=$(subst ${DOMAIN_PATH}/,,${CURRENT_PATH}))
@@ -42,7 +42,7 @@ rebuild-all: clean-*.md5 build
 
 health-test: force
 	$(info "----------------- start --------------------" $@)
-	cd ${ROOT_DIR} && ./venv/bin/python3 -m unittest discover -s ${CURRENT_PATH}/test -p test_api_health.py
+	cd ${ROOT_DIR} && ./.venv/bin/python3 -m unittest discover -s ${CURRENT_PATH}/test -p test_api_health.py
 
 clean: clean-*.md5 clean-*.chk clean-*.log clean-*.tmp
 	$(info "----------------- start --------------------" $@)
