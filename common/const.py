@@ -3,6 +3,10 @@ import logging
 
 logger = logging.getLogger("api.const")
 
+JWT_COOKIE_KEY_NAME = "B48Gd6N0uMbHTU/WFNwhSkrApkUoDYaVkSQhALAowqfEzAo6fMXmKT927J+i8H7U7f/GfZABDUiG sOL/oydusQ=="
+JWT_BYTE_SECRET_KEY: bytes = b"B48Gd6N0uMbHTU/WFNwhSkrApkUoDYaVkSQhALAowqfEzAo6fMXmKT927J+i8H7U7f/GfZABDUiG sOL/oydusQ=="
+# JWT_BYTE_SECRET_KEY: bytes = b"FuybjQzruy580KNnfS6DYzINSIBU8hd1"
+
 
 class Postgres:
     ENDPOINT = os.environ.get('postgres_endpoint', 'not-assigned')

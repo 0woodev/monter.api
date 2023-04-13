@@ -5,12 +5,14 @@ from common.ResultCode import ResultCode
 
 
 class CommonResultCode(ResultCode, Enum):
+
     SUCCESS = (HTTPStatus.OK, "SUCCESS", "success")
     UNAUTHORIZED = (HTTPStatus.UNAUTHORIZED, "UNAUTHORIZED", "request unauthorized")
     INVALID_PARAMETER = (HTTPStatus.BAD_REQUEST, "INVALID_PARAMETER", "invalid parameter")
     PARAMETER_NOT_FOUND = (HTTPStatus.BAD_REQUEST, "PARAMETER_NOT_FOUND", "parameter not found")
     QUERY_NOT_FOUND = (HTTPStatus.BAD_REQUEST, "QUERY_NOT_FOUND", "query parameter not found")
     INVALID_REQUEST_BODY = (HTTPStatus.BAD_REQUEST, "INVALID_REQUEST_BODY", "invalid requestBody")
+    INVALID_HEADERS = (HTTPStatus.UNAUTHORIZED, "INVALID_HEADERS", "headers 를 확인하세요")
     BAD_REQUEST = (HTTPStatus.BAD_REQUEST, "BAD_REQUEST", "input is wrong")
     UNEXPECTED_QUERY_PARAMETER = (HTTPStatus.BAD_REQUEST, "UNEXPECTED_QUERY_PARAMETER", "unexpected query parameter")
     RESOURCE_NOT_FOUND = (HTTPStatus.BAD_REQUEST, "RESOURCE_NOT_FOUND", "can't find the resource")
