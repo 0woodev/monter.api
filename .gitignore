@@ -2,3 +2,17 @@
 /.venv/
 
 .idea
+
+d_*/Makefile
+d_*/v*_*/Makefile
+
+d_*/v*_*/upload.sh
+d_*/v*_*/change_env.sh
+
+d_*/v*_*/dist
+
+**/report
+
+*.md5
+*.chk
+*.tmp

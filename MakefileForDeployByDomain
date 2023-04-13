@@ -1,0 +1,60 @@
+$(eval export ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST)))))
+$(eval export MODULE_DEPTH := 1)
+$(eval MD5_exec=md5)
+$(info make ${MD5_exec})
+
+t%:
+	$(eval target=$(subst t,,$@))
+	cd ../../terraform && make ${target}
+
+sync: build tapplyq
+rebuild: clean build
+
+build: common.chk
+	$(info -------------------------------------------- $@)
+	find . -maxdepth ${MODULE_DEPTH} -mindepth 1 -path '*/v*_*' -type d -exec echo {} \;
+	find . -maxdepth ${MODULE_DEPTH} -mindepth 1 -path '*/v*_*' -type d -exec sh -c 'cd ${ROOT_DIR}/{} && make build' \;
+	find . -maxdepth ${MODULE_DEPTH} -mindepth 1 -path '*/build*_*' -type d -exec sh -c 'cd ${ROOT_DIR}/{} && make build' \;
+	rm -f common.chk
+
+clean:
+	$(info -------------------------------------------- $@)
+	find . -maxdepth ${MODULE_DEPTH} -mindepth 1 -path '*/v*_*' -type d -exec echo {} \;
+	find . -maxdepth ${MODULE_DEPTH} -mindepth 1 -path '*/v*_*' -type d -exec sh -c 'cd ${ROOT_DIR}/{} && make clean' \;
+	find . -maxdepth ${MODULE_DEPTH} -mindepth 1 -path '*/build*_*' -type d -exec sh -c 'cd ${ROOT_DIR}/{} && make clean' \;
+	rm -f common.chk
+
+common.chk common.md5 logger_util.chk logger_util.md5:
+	$(info -------------------------------------------- $@)
+	@find ./common -maxdepth 6 -mindepth 1 -type f \
+! -path '*/test/*' \
+! -name 'test_*' \
+! -name '*.md5' \
+! -name '*.chk' \
+! -name '*.log' \
+! -name '*.tmp' \
+-exec sh -c 'path=$${1} && ${MD5_exec} $${path} \
+' sh {} \; | ${MD5_exec} > $@
+
+
+clean-%:
+	$(info "----------------- start --------------------" $@)
+	$(eval target=$(subst clean-,,$@))
+	echo ${target}
+	@find . -maxdepth 6 -mindepth 1 -path '*' -type f \
+! -path '*/dist/*' \
+! -path '*/venv/*' \
+! -path '*/package/*' \
+ -name '${target}' \
+! -name 'test*' \
+-exec sh -c 'echo --- $${1:2} \
+' sh {} \;
+	@find . -maxdepth 6 -mindepth 1 -path '*' -type f \
+! -path '*/dist/*' \
+! -path '*/venv/*' \
+! -path '*/package/*' \
+ -name '${target}' \
+! -name 'test*' \
+-exec sh -c 'rm $${1:2} \
+' sh {} \; | echo ;
+

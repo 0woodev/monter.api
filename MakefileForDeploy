@@ -1,0 +1,250 @@
+$(eval CURRENT_PATH=$(PWD))
+$(eval ROOT_DIR=$(realpath ${CURRENT_PATH}/../../))
+$(eval DOMAIN_PATH=$(realpath ${CURRENT_PATH}/../))
+$(eval VENV_DIR=$(realpath ${ROOT_DIR}/venv/))
+$(eval CURRENT_RELATED_PATH=$(subst ${ROOT_DIR}/,,${CURRENT_PATH}))
+$(eval DOMAIN_RELATED_PATH=$(subst ${ROOT_DIR}/,,${DOMAIN_PATH}))
+$(eval CURRENT_PATH_NAME=$(subst ${DOMAIN_PATH}/,,${CURRENT_PATH}))
+$(eval PYTHON_VERSION=python3.9)
+$(eval MD5_exec=md5)
+#$(eval MD5_exec=md5sum)
+#$(info CURRENT_PATH - ${CURRENT_PATH}--)
+#$(info ROOT_DIR - ${ROOT_DIR}--)
+#$(info DOMAIN_PATH - ${DOMAIN_PATH}--)
+#$(info VENV_DIR - ${VENV_DIR}--)
+#$(info CURRENT_RELATED_PATH - -${CURRENT_RELATED_PATH}-)
+#$(info DOMAIN_RELATED_PATH - -${DOMAIN_RELATED_PATH}-)
+#$(info CURRENT_PATH_NAME - -${CURRENT_PATH_NAME}-)
+#$(info PYTHON_VERSION - ${PYTHON_VERSION}--)
+$(info make ${MD5_exec})
+
+check_sum    := 'un-asigned'
+current_sum  := 'un-asigned'
+check_sum2   := 'un-asigned'
+current_sum2 := 'un-asigned'
+
+#.SILENT: upload upload-layer
+
+upload: build
+	./upload.sh
+
+sync: build
+	cd ../.. && make tapplyq
+
+build: build-diff layer-diff
+	$(info "----------------- start --------------------" $@)
+
+rebuild: clean-build-md5.md5 build
+	$(info "----------------- start --------------------" $@)
+
+rebuild-all: clean-*.md5 build
+	$(info "----------------- start --------------------" $@)
+
+health-test: force
+	$(info "----------------- start --------------------" $@)
+	cd ${ROOT_DIR} && ./venv/bin/python3 -m unittest discover -s ${CURRENT_PATH}/test -p test_api_health.py
+
+clean: clean-*.md5 clean-*.chk clean-*.log clean-*.tmp
+	$(info "----------------- start --------------------" $@)
+	$(info ** clean ${CURRENT_RELATED_PATH})
+	rm -rf dist
+	rm -rf package
+
+force:
+	$(info "----------------- start --------------------" $@)
+	$(info ** force ${CURRENT_RELATED_PATH})
+
+dist:
+	mkdir dist
+
+package:
+	mkdir package
+
+
+
+################################################################################
+# build zip for dist/build.zip
+################################################################################
+build-src: dist
+	$(info "----------------- start --------------------" $@)
+	$(info ** build ${CURRENT_RELATED_PATH})
+	rm -rf dist/build.zip
+	cd ${ROOT_DIR} && zip -r ./${CURRENT_RELATED_PATH}/dist/build.zip ./common/* ./${CURRENT_RELATED_PATH}/*.py -x ./common/test/* -x ./${CURRENT_RELATED_PATH}/test_*;
+	@echo "echo -- ${DOMAIN_PATH}/ + model --";
+	@if [ -d "../model" ]; then \
+	echo "echo -- ${DOMAIN_PATH}/ + model joined --"; \
+	cd ${ROOT_DIR} && zip -r ./${CURRENT_RELATED_PATH}/dist/build.zip ./${DOMAIN_RELATED_PATH}/model/* -x ./${DOMAIN_RELATED_PATH}/model/test/* -x ./${DOMAIN_RELATED_PATH}/model/test_* -x ./${DOMAIN_RELATED_PATH}/model/*/test_* ; \
+fi
+	@echo "echo -- ${DOMAIN_PATH}/ + service --";
+	@if [ -d "../service" ]; then \
+	echo "echo -- ${DOMAIN_PATH}/ + service joined --"; \
+	cd ${ROOT_DIR} && zip -r ./${CURRENT_RELATED_PATH}/dist/build.zip ./${DOMAIN_RELATED_PATH}/service/* -x ./${DOMAIN_RELATED_PATH}/service/test/* -x ./${DOMAIN_RELATED_PATH}/service/test_* -x ./${DOMAIN_RELATED_PATH}/service/*/test_* ; \
+fi
+	@echo "echo -- ${CURRENT_PATH}/ + model --";
+	@if [ -d "${CURRENT_PATH}/model" ]; then \
+	echo "echo -- ${CURRENT_PATH}/ + model joined --"; \
+	cd ${ROOT_DIR} && zip -r ./${CURRENT_RELATED_PATH}/dist/build.zip ./${CURRENT_RELATED_PATH}/model/* -x ./${CURRENT_RELATED_PATH}/model/test/* -x ./${CURRENT_RELATED_PATH}/model/test_* -x ./${CURRENT_RELATED_PATH}/model/*/test_* ; \
+fi
+	@echo "echo -- ${CURRENT_PATH}/ + service --";
+	@if [ -d "${CURRENT_PATH}/service" ]; then \
+	echo "echo -- ${CURRENT_PATH}/ + service joined --"; \
+	cd ${ROOT_DIR} && zip -r ./${CURRENT_RELATED_PATH}/dist/build.zip ./${CURRENT_RELATED_PATH}/service/* -x ./${CURRENT_RELATED_PATH}/service/test/* -x ./${CURRENT_RELATED_PATH}/service/test_* -x ./${CURRENT_RELATED_PATH}/service/*/test_* ; \
+fi
+	rm -f ${CURRENT_PATH}/build-md5.md5 ;
+	cd ${CURRENT_PATH} && mv -f build-md5.chk build-md5.md5 ;
+	rm -f ${CURRENT_PATH}/common.md5 ;
+	cd ${CURRENT_PATH} && mv -f common.chk common.md5 ;
+	#cd ${CURRENT_PATH} && (./upload.sh > /dev/null);
+
+################################################################################
+# build md5 for source code
+################################################################################
+build-md5.md5 build-md5.chk: force build-md5.tmp
+	$(info "----------------- start --------------------" $@)
+	@(cat build-md5.tmp | ${MD5_exec} > $@ && echo make ${MD5_exec} - $@ && cat $@)
+	@(rm -f build-md5.tmp)
+
+build-md5.tmp: force
+	@find . -maxdepth 6 -mindepth 1 -type f \
+! -path '*/dist/*' ! -path '*/package/*' \
+! -name 'test_*' \
+! -name '*.md5' \
+! -name '*.chk' \
+! -name '*.log' \
+! -name '*.tmp' \
+-exec sh -c 'path=$${1:2} && ${MD5_exec} $${path} \
+' sh {} \; > $@
+	@if [ -d "../model" ]; then \
+	find ../model -maxdepth 6 -mindepth 1 -type f \
+! -name 'test_*' \
+! -name '*.md5' \
+! -name '*.chk' \
+! -name '*.log' \
+! -name '*.tmp' \
+-exec sh -c 'path=$${1} && ${MD5_exec} $${path} \
+' sh {} \; >> $@ ; \
+fi
+	@if [ -d "../service" ]; then \
+	find ../service -maxdepth 6 -mindepth 1 -type f \
+! -name 'test_*' \
+! -name '*.md5' \
+! -name '*.chk' \
+! -name '*.log' \
+! -name '*.tmp' \
+-exec sh -c 'path=$${1} && ${MD5_exec} $${path} \
+' sh {} \; >> $@ ; \
+fi
+
+common.chk:
+	$(info "----------------- start --------------------" $@)
+	@if [ ! -e "../../common.chk" ]; then \
+	cd ${ROOT_DIR} && make common.chk ; \
+	cd ${CURRENT_PATH} && cp -f ${ROOT_DIR}/common.chk ${CURRENT_PATH}/common.chk ; \
+	cd ${ROOT_DIR} && rm -f common.chk ; \
+else \
+	cd ${CURRENT_PATH} && cp -f ${ROOT_DIR}/common.chk ${CURRENT_PATH}/common.chk ; \
+fi
+
+
+################################################################################
+# build md5 for requirements.txt
+# https://etloveguitar.tistory.com/18
+################################################################################
+requirements.chk requirements.md5: force
+	$(info "----------------- start --------------------" $@)
+	rm -f $@
+	@if [ -s "${CURRENT_PATH}/requirements.txt" ]; then \
+	cd ${CURRENT_PATH} && ${MD5_exec} requirements.txt > $@ && echo make $@ ; \
+fi;
+
+################################################################################
+# diff checkers
+################################################################################
+build-diff: dist dist/build.zip common.chk build-md5.chk
+	$(info "----------------- start --------------------" $@)
+	@echo -- ${check_sum} == ${current_sum} -- ${check_sum2} == ${current_sum2} -- ${check_sum3} == ${current_sum3}
+	$(eval check_sum="$(shell cat build-md5.chk 2> /dev/null)")
+	$(eval current_sum="$(shell cat build-md5.md5 2> /dev/null)")
+	$(eval check_sum2="$(shell cat common.chk 2> /dev/null)")
+	$(eval current_sum2="$(shell cat common.md5 2> /dev/null)")
+	@echo -- ${check_sum} == ${current_sum} -- ${check_sum2} == ${current_sum2} -- ${check_sum3} == ${current_sum3}
+	@if [ ${check_sum} == ${current_sum} ] && [ ${check_sum2} == ${current_sum2} ] && [ ${check_sum3} == ${current_sum3} ]; then \
+	echo "************************************************" ; \
+	echo build-diff : EQ ; \
+	echo "************************************************" ; \
+else \
+	echo "**************** NEQ NEQ NEQ *******************" ; \
+	echo build-diff : NEQ ; \
+	echo "**************** NEQ NEQ NEQ *******************" ; \
+	echo "${CURRENT_PATH}/ + zip every python source code"; \
+	make build-src ; \
+fi;
+	rm -f common.chk ;
+	rm -f build-md5.chk ;
+#	cd ${CURRENT_PATH} && (./upload.sh > /dev/null); \
+
+layer-diff: dist dist/layer.zip requirements.chk
+	$(info "----------------- start --------------------" $@)
+	@echo --init ${check_sum} == ${current_sum}
+	$(eval check_sum="$(shell cat requirements.chk 2> /dev/null)")
+	$(eval current_sum="$(shell cat requirements.md5 2> /dev/null)")
+	@echo --check ${check_sum} == ${current_sum}
+	@if [ ${check_sum} == ${current_sum} ]; then \
+	echo "************************************************" ; \
+	echo layer-diff : EQ ; \
+	echo "************************************************" ; \
+else \
+	echo "**************** NEQ NEQ NEQ *******************" ; \
+	echo build-diff : NEQ ; \
+	echo "**************** NEQ NEQ NEQ *******************" ; \
+	echo "${CURRENT_PATH}/ + docker package build for layer"; \
+	rm -rf package ; \
+	mkdir package ; \
+	docker run \
+		-v ${CURRENT_PATH}:/var/task \
+		-v ${CURRENT_PATH}/package:/opt \
+		"public.ecr.aws/sam/build-${PYTHON_VERSION}:latest-arm64" \
+		/bin/sh -c "pip install -r requirements.txt -t /opt/python/lib/${PYTHON_VERSION}/site-packages/; exit"; \
+	echo "----------------- start --------------------" ; \
+	${VENV_DIR}/bin/pip3 install -r ${CURRENT_PATH}/requirements.txt ; \
+	cd ${CURRENT_PATH}/package && zip -r ../dist/layer.zip python/* ; \
+fi;
+	rm -f requirements.chk ;
+	make requirements.md5 ;
+
+################################################################################
+# sync zip and md5
+################################################################################
+dist/build.zip:
+	$(info "----------------- start --------------------" $@)
+	rm -f build-md5.md5 ; \
+
+dist/layer.zip:
+	$(info "----------------- start --------------------" $@)
+	rm -f requirements.md5 ; \
+
+################################################################################
+# clean-%
+################################################################################
+clean-%:
+	$(info "----------------- start --------------------" $@)
+	$(eval target=$(subst clean-,,$@))
+	echo ${target}
+	@find . -maxdepth 6 -mindepth 1 -path '*' -type f \
+! -path '*/dist' \
+! -path '*/package' \
+ -name '${target}' \
+! -name 'test*' \
+-exec sh -c 'echo --- $${1:2} \
+' sh {} \;
+	@find . -maxdepth 6 -mindepth 1 -path '*' -type f \
+! -path '*/dist' \
+! -path '*/package' \
+ -name '${target}' \
+! -name 'test*' \
+-exec sh -c 'rm $${1:2} \
+' sh {} \; | echo \;
+#	echo "----------------- start --------------------" ; \
+#	cd ${CURRENT_PATH}/package && zip -r ../dist/layer.zip python/* ; \
+#	rm -f requirements.md5 ; \
+#	cd ${CURRENT_PATH} && mv -f requirements.chk requirements.md5 ; \
