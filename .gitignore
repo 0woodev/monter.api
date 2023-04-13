@@ -9,7 +9,9 @@ d_*/v*_*/Makefile
 d_*/v*_*/upload.sh
 d_*/v*_*/change_env.sh
 
-d_*/v*_*/dist
+d_*/v*_*/dist/*
+d_*/v*_*/package
+d_*/v*_*/common
 
 **/report
 
