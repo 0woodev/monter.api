@@ -19,7 +19,7 @@ class PostgresUtil:
             logger.error(f'ERROR: Could not connect to Postgres instance. \n{traceback.format_exc()}')
             self.conn = None
 
-    def get_select_query_result(self, query_string, args) -> map:
+    def get_select_query_result(self, query_string, args=None) -> map:
         if self.conn is None:
             raise MonterException(CommonResultCode.DB_CONNECTION_ERROR)
 
@@ -61,5 +61,3 @@ def to_dict_by_relations(row, relation_table):
 
     result[relation_table] = join_data
     return result
-
-
