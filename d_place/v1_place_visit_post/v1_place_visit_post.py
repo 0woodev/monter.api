@@ -21,11 +21,10 @@ def lambda_handler(event, context):
     query = f'''
         INSERT INTO place_to_user("userId", "placeId", "solvedLog", "visitedAt")
         VALUES (%s, %s, %s, %s)
+        RETURNING *
     '''
 
-    pg_util.insert_query(query, (user_id, place_id, solved_log, visited_at))
-
-    return
+    return list(pg_util.insert_and_returning_query(query, (user_id, place_id, solved_log, visited_at)))[0]
 
 
 def get_body_contents(event):
