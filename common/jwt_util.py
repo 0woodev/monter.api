@@ -1,12 +1,13 @@
 import base64
 import logging
+from datetime import datetime, timedelta
 
 import jwt
 from cryptography.fernet import Fernet
 
 from common.CommonResultCode import CommonResultCode
 from common.MonterException import MonterException
-from common.const import JWT_BYTE_SECRET_KEY
+from common.const import JWT_BYTE_SECRET_KEY, JWT_SECRET_KEY, JWT_BYTE_SECRET_KEY2
 
 fernet: Fernet = None
 algorithm = "HS256"
@@ -18,13 +19,37 @@ def prepare_encrypt():
     global fernet
 
     try:
-        private_key = JWT_BYTE_SECRET_KEY
-        private_key_bytes = bytes(private_key)
-        encrypt_key = base64.urlsafe_b64encode(private_key_bytes)
+        # private_key_bytes = bytes(JWT_SECRET_KEY)
+        encrypt_key = base64.urlsafe_b64encode(JWT_BYTE_SECRET_KEY2)
 
         fernet = Fernet(encrypt_key)
     except Exception as exc:
         logger.exception(exc)
+
+
+def generate_jwt_token(user_id, name):
+    try:
+        prepare_encrypt()
+
+        issue_at = datetime.now() - timedelta(minutes=1)
+        expire_at = issue_at + timedelta(days=1)
+
+        payload = {
+            # registered claim
+            "iss": "tbd-alpha.vercel.app/",
+            "iat": issue_at.timestamp(),
+            "exp": expire_at.timestamp(),
+            # private claim
+            'id': user_id,
+            'name': name
+        }
+
+        str_private_key = str(JWT_BYTE_SECRET_KEY, "UTF-8")
+        token = jwt.encode(payload=payload, key=str_private_key, algorithm=algorithm)
+
+        return token
+    except Exception as exc:
+        raise exc
 
 
 def decode_jwt_token(token):
