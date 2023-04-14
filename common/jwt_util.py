@@ -7,7 +7,7 @@ from cryptography.fernet import Fernet
 
 from common.CommonResultCode import CommonResultCode
 from common.MonterException import MonterException
-from common.const import JWT_BYTE_SECRET_KEY, JWT_SECRET_KEY, JWT_BYTE_SECRET_KEY2
+from common.const import JWT_BYTE_SECRET_KEY
 
 fernet: Fernet = None
 algorithm = "HS256"
@@ -19,8 +19,7 @@ def prepare_encrypt():
     global fernet
 
     try:
-        # private_key_bytes = bytes(JWT_SECRET_KEY)
-        encrypt_key = base64.urlsafe_b64encode(JWT_BYTE_SECRET_KEY2)
+        encrypt_key = base64.urlsafe_b64encode(JWT_BYTE_SECRET_KEY)
 
         fernet = Fernet(encrypt_key)
     except Exception as exc:

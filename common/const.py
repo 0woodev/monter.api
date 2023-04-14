@@ -3,9 +3,8 @@ import logging
 
 logger = logging.getLogger("api.const")
 
-JWT_COOKIE_KEY_NAME = "B48Gd6N0uMbHTU/WFNwhSkrApkUoDYaVkSQhALAowqfEzAo6fMXmKT927J+i8H7U7f/GfZABDUiG sOL/oydusQ=="
-JWT_BYTE_SECRET_KEY: bytes = b"B48Gd6N0uMbHTU/WFNwhSkrApkUoDYaVkSQhALAowqfEzAo6fMXmKT927J+i8H7U7f/GfZABDUiG sOL/oydusQ=="
-# JWT_BYTE_SECRET_KEY: bytes = b"FuybjQzruy580KNnfS6DYzINSIBU8hd1"
+JWT_SECRET_KEY = os.environ.get('jwt_secret_key', "12345678901234567890123456789012")
+JWT_BYTE_SECRET_KEY: bytes = bytes(JWT_SECRET_KEY, 'utf-8')
 
 
 class Postgres:
@@ -73,3 +72,5 @@ class MonterResponseBody:
     MESSAGE = "message"
     DATA = "data"
 
+
+GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v1/userinfo"
