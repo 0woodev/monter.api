@@ -26,7 +26,7 @@ def lambda_handler(event, context):
         user = user[0]
 
     query = f'''
-        SELECT id, "userId", "placeId", "solvedLog", "createdAt", "updatedAt"
+        SELECT id, "userId", "placeId", "solvedLog", "createdAt", "updatedAt", "visitedAt", "colorHex"
         FROM place_to_user
         WHERE place_to_user."userId" = %s
     '''
