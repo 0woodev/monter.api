@@ -22,28 +22,38 @@ class PostgresUtil:
     def execute_query(self, query_string, args=None) -> map:
         if self.conn is None:
             raise MonterException(CommonResultCode.DB_CONNECTION_ERROR)
+        try:
+            with self.conn.cursor() as cur:
+                cur.execute(query_string, args)
+                columns = [col[0] for col in cur.description]
+                logger.info(columns)
+                rows = cur.fetchall()
+                cur.close()
 
-        with self.conn.cursor() as cur:
-            cur.execute(query_string, args)
-            columns = [col[0] for col in cur.description]
-            logger.info(columns)
-            rows = cur.fetchall()
+            return map(lambda x: dict(zip(columns, x)), rows)
+        except Exception as exc:
             cur.close()
+            logger.error("쿼리 실행 중 종료되었습니다")
+            raise exc
 
-        return map(lambda x: dict(zip(columns, x)), rows)
 
     def execute_and_returning_query(self, query_string, args) -> map:
         if self.conn is None:
             raise MonterException(CommonResultCode.DB_CONNECTION_ERROR)
+        try:
+            with self.conn.cursor() as cur:
+                cur.execute(query_string, args)
+                self.conn.commit()
+                columns = [col[0] for col in cur.description]
+                rows = cur.fetchall()
+                cur.close()
 
-        with self.conn.cursor() as cur:
-            cur.execute(query_string, args)
+            return map(lambda x: dict(zip(columns, x)), rows)
+        except Exception as exc:
             self.conn.commit()
-            columns = [col[0] for col in cur.description]
-            rows = cur.fetchall()
             cur.close()
-
-        return map(lambda x: dict(zip(columns, x)), rows)
+            logger.error("쿼리 실행 중 종료되었습니다")
+            raise exc
 
 
 pg_util = PostgresUtil()

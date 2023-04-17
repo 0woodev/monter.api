@@ -21,6 +21,7 @@ class CommonResultCode(ResultCode, Enum):
     HTTP_METHOD_NOT_FOUND = (HTTPStatus.BAD_REQUEST, "HTTP_METHOD_NOT_FOUND", "can't find the HTTP method")
 
     DB_CONNECTION_ERROR = (HTTPStatus.INTERNAL_SERVER_ERROR, "DB_CONNECTION_ERROR", "DB Connection 을 확인하세요")
+    DB_QUERY_ERROR = (HTTPStatus.BAD_REQUEST, "DB_QUERY_ERROR", "Query 에 실패했습니다")
 
     INTERNAL_SERVICE_ERROR = (HTTPStatus.BAD_REQUEST, "INTERNAL_SERVICE_ERROR", "internal service is error")
     INVALID_QUERY_PARAMETER = (HTTPStatus.BAD_REQUEST, "INVALID_QUERY_PARAMETER", "invalid query parameter")
