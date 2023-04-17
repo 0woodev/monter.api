@@ -14,7 +14,7 @@ class Test(TestCase):
             'solvedLog': '쉬웠다리',
             # 'visitedAt': datetime.datetime(2023, 4, 10, 12, 15, 30, 0).isoformat()
             # 'visitedAt': 'Mon, 17 Apr 2023 03:21:28 GMT',
-            'visitedAt': '2023-04-24 19:37:34',
+            'visitedAt': '2023-04-08 19:37:34',
             'colorHex': '#D75353'
         }
 

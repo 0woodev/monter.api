@@ -18,7 +18,7 @@ def lambda_handler(event, context):
     user_id = get_requester_id(event)
     place_id, solved_log, visited_at, color_hex = get_body_contents(event)
 
-    is_today_first_visit = check_user_visit_or_not_today(visited_at)
+    is_today_first_visit = check_user_visit_or_not_today(user_id, place_id, visited_at)
     if not is_today_first_visit:
         raise MonterException(CommonResultCode.RESOURCE_ALREADY_EXIST, None, '금일 해당 클라이밍장에 방문한 기록이 있습니다.')
 
@@ -48,19 +48,20 @@ def add_new_visit_log(color_hex, place_id, solved_log, user_id, visited_at):
         raise MonterException(CommonResultCode.MONTER_UNEXPECTED_ERROR, exc, '방문기록에 문제가 발생했습니다')
 
 
-
-def check_user_visit_or_not_today(visited_at):
+def check_user_visit_or_not_today(user_id, place_id, visited_at):
     try:
         visited_date = datetime.strptime(visited_at, '%Y-%m-%d %H:%M:%S').date().isoformat()
         check_visit_or_not_query = '''
             SELECT COUNT(*) as cnt
             FROM place_to_user
             WHERE to_char("visitedAt", 'yyyy-mm-dd') = %s
+                AND "userId" = %s
+                AND "placeId" = %s
         '''
 
         check_visit_query_response = list(pg_util.get_select_query_result(
             check_visit_or_not_query,
-            (visited_date,)
+            (visited_date, user_id, place_id)
         ))
 
         if len(check_visit_query_response) == 0:
