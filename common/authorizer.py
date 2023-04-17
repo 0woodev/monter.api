@@ -1,7 +1,11 @@
 from common.CommonResultCode import CommonResultCode
 from common.MonterException import MonterException
+from common.const import ConstHttp, ConstAWS
 from common.jwt_util import decode_jwt_token
 
+import logging
+
+logger = logging.getLogger("api.authorizer")
 
 def authorizer(func):
     def wrapper(*args, **kwargs):
@@ -34,7 +38,7 @@ def _validate_and_extract_input_for_token(event):
 
     event['headers'] = _lowercase_dict_key(event['headers'])
 
-    authorization = event['headers'].get('authorization')
+    authorization = event['headers'].get(ConstAWS.AUTHORIZATION)
     if authorization is None or not authorization.startswith('Bearer '):
         raise MonterException(CommonResultCode.UNAUTHORIZED, None, data='Authorization: Bearer token is invalid')
 
@@ -46,7 +50,10 @@ def _lowercase_dict_key(data: dict) -> dict:
     result = dict()
 
     for key, value in data.items():
-        result[key.lower()] = value
+        if isinstance(value, dict):
+            result[key.lower()] = _lowercase_dict_key(value)
+        else:
+            result[key.lower()] = value
 
     return result
 

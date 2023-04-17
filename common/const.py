@@ -41,6 +41,7 @@ class Postgres:
 
 class ConstAWS:
     AUTHORIZER = "authorizer"
+    AUTHORIZATION = "authorization"
     SESSION_OWNER_ID = "session_owner_id"
     HEADER = "headers"
     MULTI_VALUE_HEADER = "multiValueHeaders"
@@ -58,6 +59,11 @@ class ConstAlarm:
 
 
 class ConstHttp:
+    ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin"
+    ACCESS_CONTROL_ALLOW_METHODS = "Access-Control-Allow-Methods"
+    ACCESS_CONTROL_ALLOW_HEADERS = "Access-Control-Allow-Headers"
+    ACCESS_CONTROL_MAX_AGE = "Access-Control-Max-Age"
+    AUTHORIZATION = "Authorization"
     PLAIN_TEXT = "plain/text"
     HEADERS = "headers"
     CONTENT_TYPE = "Content-Type"

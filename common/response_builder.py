@@ -13,7 +13,11 @@ logger = logging.getLogger('api.response_builder')
 def init_json_response():
     default_attrs = {
         ConstHttp.HEADERS: {
-            ConstHttp.CONTENT_TYPE: ConstHttp.APPLICATION_JSON
+            ConstHttp.CONTENT_TYPE: ConstHttp.APPLICATION_JSON,
+            # ConstHttp.ACCESS_CONTROL_ALLOW_ORIGIN: '*',
+            # ConstHttp.ACCESS_CONTROL_ALLOW_METHODS: 'GET,POST,PUT,DELETE',
+            # ConstHttp.ACCESS_CONTROL_ALLOW_HEADERS: 'Authorization,Content-Type',
+            # ConstHttp.ACCESS_CONTROL_MAX_AGE: 86400
         },
         ConstHttp.IS_BASE_64_ENCODED: False,
     }
@@ -76,15 +80,12 @@ def build_fail_response(err):
 
 
 def __get_response_for_fail_in_building_response(err):
-    return {
-        ConstHttp.STATUS_CODE: HTTPStatus.INTERNAL_SERVER_ERROR,
-        ConstHttp: Json.to_json_string({
+
+    response = init_json_response()
+    response[ConstHttp.BODY] = Json.to_json_string({
             'statusCode': HTTPStatus.INTERNAL_SERVER_ERROR,
             'error': 'Build Response Fail',
             'message': f'응답값에 이상이 있습니다.',
-        }),
-        ConstHttp.HEADERS: {
-            ConstHttp.CONTENT_TYPE: ConstHttp.APPLICATION_JSON,
-        },
-        ConstHttp.IS_BASE_64_ENCODED: False
-    }
+        })
+
+    return response
