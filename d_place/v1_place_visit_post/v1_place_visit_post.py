@@ -15,16 +15,16 @@ logger = logging.getLogger('api')
 @ResponseHandler.api
 @authorizer
 def lambda_handler(event, context):
-    place_id, solved_log, visited_at = get_body_contents(event)
+    place_id, solved_log, visited_at, color_hex = get_body_contents(event)
     user_id = get_requester_id(event)
 
     query = f'''
-        INSERT INTO place_to_user("userId", "placeId", "solvedLog", "visitedAt")
-        VALUES (%s, %s, %s, %s)
+        INSERT INTO place_to_user("userId", "placeId", "solvedLog", "visitedAt", "colorHex")
+        VALUES (%s, %s, %s, %s, %s)
         RETURNING *
     '''
 
-    return list(pg_util.insert_and_returning_query(query, (user_id, place_id, solved_log, visited_at)))[0]
+    return list(pg_util.insert_and_returning_query(query, (user_id, place_id, solved_log, visited_at, color_hex)))[0]
 
 
 def get_body_contents(event):
@@ -36,7 +36,9 @@ def get_body_contents(event):
         raise MonterException(CommonResultCode.INVALID_BODY_CONTENTS, None, "solvedLog 가 없습니다")
     if "visitedAt" not in body_dict:
         raise MonterException(CommonResultCode.INVALID_BODY_CONTENTS, None, "visitedAt 가 없습니다")
+    if "colorHex" not in body_dict:
+        raise MonterException(CommonResultCode.INVALID_BODY_CONTENTS, None, "colorHex 가 없습니다")
 
-    return body_dict["placeId"], body_dict["solvedLog"], body_dict["visitedAt"]
+    return body_dict["placeId"], body_dict["solvedLog"], body_dict["visitedAt"], body_dict["colorHex"]
 
 
