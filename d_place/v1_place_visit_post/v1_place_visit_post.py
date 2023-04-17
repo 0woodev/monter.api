@@ -57,6 +57,7 @@ def check_user_visit_or_not_today(user_id, place_id, visited_at):
             WHERE to_char("visitedAt", 'yyyy-mm-dd') = %s
                 AND "userId" = %s
                 AND "placeId" = %s
+                AND "isDeleted" = false
         '''
 
         check_visit_query_response = list(pg_util.execute_query(

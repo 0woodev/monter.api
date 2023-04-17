@@ -13,7 +13,7 @@ logger = logging.getLogger("api.test.place_visited_id_delete")
 class Test(TestCase):
     def test_lambda_handler(self):
         path_params = {
-            'id': 100
+            'id': 7
         }
 
         response = lambda_handler({

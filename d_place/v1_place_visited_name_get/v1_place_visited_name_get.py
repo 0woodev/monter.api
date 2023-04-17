@@ -29,6 +29,7 @@ def lambda_handler(event, context):
         SELECT id, "userId", "placeId", "solvedLog", "createdAt", "updatedAt", "visitedAt", "colorHex"
         FROM place_to_user
         WHERE place_to_user."userId" = %s
+            AND place_to_user."isDeleted" = false
     '''
     visit_logs = pg_util.execute_query(select_target_user_query, (user.get("id"),))
 

@@ -17,10 +17,12 @@ def lambda_handler(event, context):
     visit_log_id = event['pathParameters'].get("id")
 
     delete_query = f'''
-        DELETE FROM place_to_user
+        UPDATE "place_to_user"
+        SET "isDeleted" = true
         WHERE place_to_user."id" = %s
             AND place_to_user."userId" = %s
-            RETURNING *
+            AND place_to_user."isDeleted" = false
+        RETURNING *
     '''
 
     visit_logs = list(pg_util.execute_and_returning_query(delete_query, (visit_log_id, user_id)))
@@ -29,3 +31,11 @@ def lambda_handler(event, context):
         raise MonterException(CommonResultCode.RESOURCE_NOT_FOUND, None, "해당하는 방문기록이 없습니다")
     else:
         return visit_logs[0]
+
+
+delete_query_2 = f'''
+        DELETE FROM place_to_user
+        WHERE place_to_user."id" = %s
+            AND place_to_user."userId" = %s
+            RETURNING *
+    '''

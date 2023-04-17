@@ -33,7 +33,10 @@ def lambda_handler(event, context):
         pg_util.execute_and_returning_query(update_query, (*update_values_tuple, visit_log_id))
     )
 
-    return update_query_response[0]
+    if len(update_query_response) == 0:
+        raise MonterException(CommonResultCode.RESOURCE_NOT_FOUND, None, "해당하는 방문기록이 없습니다")
+    else:
+        return update_query_response[0]
 
 
 def get_body_contents(event) -> dict:
