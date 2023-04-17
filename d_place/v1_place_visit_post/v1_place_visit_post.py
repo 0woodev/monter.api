@@ -33,7 +33,7 @@ def add_new_visit_log(color_hex, place_id, solved_log, user_id, visited_at):
             VALUES (%s, %s, %s, %s, %s)
             RETURNING *
         '''
-        add_new_log_query_response = list(pg_util.insert_and_returning_query(
+        add_new_log_query_response = list(pg_util.execute_and_returning_query(
             add_new_visit_log_query,
             (user_id, place_id, solved_log, visited_at, color_hex)
         ))
@@ -59,7 +59,7 @@ def check_user_visit_or_not_today(user_id, place_id, visited_at):
                 AND "placeId" = %s
         '''
 
-        check_visit_query_response = list(pg_util.get_select_query_result(
+        check_visit_query_response = list(pg_util.execute_query(
             check_visit_or_not_query,
             (visited_date, user_id, place_id)
         ))

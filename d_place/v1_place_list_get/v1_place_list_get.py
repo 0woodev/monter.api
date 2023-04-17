@@ -10,7 +10,7 @@ logger = logging.getLogger('api')
 
 @ResponseHandler.api
 def lambda_handler(event, context):
-    query = f'''
+    select_all_places_query = f'''
         SELECT
             place.id, 
             place.name, 
@@ -29,7 +29,7 @@ def lambda_handler(event, context):
                 ON place."franchiseId" = franchise.id;
     '''
 
-    rows = pg_util.get_select_query_result(query)
+    rows = pg_util.execute_query(select_all_places_query)
     return list(map(lambda x: to_dict_by_relations(x, relation_table="franchise"), rows))
 
 

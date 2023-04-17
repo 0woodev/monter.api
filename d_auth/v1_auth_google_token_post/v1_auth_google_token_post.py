@@ -31,7 +31,7 @@ def lambda_handler(event, context):
         WHERE "user"."googleId" = %s
     '''
 
-    user = list(pg_util.get_select_query_result(query_select_user_by_google_id, (google_id,)))
+    user = list(pg_util.execute_query(query_select_user_by_google_id, (google_id,)))
 
     if len(user) == 0:
         query_insert_new_user = '''
@@ -40,7 +40,7 @@ def lambda_handler(event, context):
             RETURNING *
         '''
 
-        insert_query_result = pg_util.insert_and_returning_query(query_insert_new_user, (name, picture, email, google_id))
+        insert_query_result = pg_util.execute_and_returning_query(query_insert_new_user, (name, picture, email, google_id))
 
         user = list(insert_query_result)
 

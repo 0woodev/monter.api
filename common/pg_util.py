@@ -19,7 +19,7 @@ class PostgresUtil:
             logger.error(f'ERROR: Could not connect to Postgres instance. \n{traceback.format_exc()}')
             self.conn = None
 
-    def get_select_query_result(self, query_string, args=None) -> map:
+    def execute_query(self, query_string, args=None) -> map:
         if self.conn is None:
             raise MonterException(CommonResultCode.DB_CONNECTION_ERROR)
 
@@ -32,7 +32,7 @@ class PostgresUtil:
 
         return map(lambda x: dict(zip(columns, x)), rows)
 
-    def insert_and_returning_query(self, query_string, args) -> map:
+    def execute_and_returning_query(self, query_string, args) -> map:
         if self.conn is None:
             raise MonterException(CommonResultCode.DB_CONNECTION_ERROR)
 

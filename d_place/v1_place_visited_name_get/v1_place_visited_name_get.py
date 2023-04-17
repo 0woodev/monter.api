@@ -13,23 +13,23 @@ logger = logging.getLogger('api')
 def lambda_handler(event, context):
     logger.warning(event)
     name = event['pathParameters'].get("name")
-    query = f'''
+    select_target_user_query = f'''
         SELECT id, name
         FROM "user"
         WHERE "user".name = %s
     '''
 
-    user = list(pg_util.get_select_query_result(query, (name, )))
+    user = list(pg_util.execute_query(select_target_user_query, (name,)))
     if len(user) == 0:
         raise MonterException(CommonResultCode.RESOURCE_NOT_FOUND, None, "유저가 존재하지 않습니다")
     else:
         user = user[0]
 
-    query = f'''
+    select_target_user_query = f'''
         SELECT id, "userId", "placeId", "solvedLog", "createdAt", "updatedAt", "visitedAt", "colorHex"
         FROM place_to_user
         WHERE place_to_user."userId" = %s
     '''
-    visit_logs = pg_util.get_select_query_result(query, (user.get("id"), ))
+    visit_logs = pg_util.execute_query(select_target_user_query, (user.get("id"),))
 
     return list(visit_logs)
