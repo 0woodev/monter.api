@@ -1,10 +1,11 @@
-import datetime
+import logging
 from http import HTTPStatus
 from unittest import TestCase
 
 from common.Json import Json
 from d_place.v1_place_visit_post.v1_place_visit_post import lambda_handler
 
+logger = logging.getLogger("api.test.place_visit_post")
 
 class Test(TestCase):
     def test_lambda_handler(self):
@@ -12,8 +13,8 @@ class Test(TestCase):
             'placeId': 6,
             'solvedLog': '쉬웠다리',
             # 'visitedAt': datetime.datetime(2023, 4, 10, 12, 15, 30, 0).isoformat()
-            'visitedAt': 'Mon, 17 Apr 2023 03:21:28 GMT',
-            # 'visitedAt': '2023-04-18 05:37:34',
+            # 'visitedAt': 'Mon, 17 Apr 2023 03:21:28 GMT',
+            'visitedAt': '2023-04-24 19:37:34',
             'colorHex': '#D75353'
         }
 
@@ -24,9 +25,16 @@ class Test(TestCase):
             'body': Json.to_json_string(body)
         }, {})
 
-        new_place_user = Json.to_dict(response.get('body')).get("data")
+        response_body = Json.to_dict(response.get('body'))
+        new_place_user = response_body.get('data')
 
-        self.assertEqual(HTTPStatus.OK, response.get('statusCode'))
-        self.assertEqual(6, new_place_user.get('userId'))
-        self.assertEqual(body['placeId'], new_place_user.get('placeId'))
+        try:
+            self.assertEqual(HTTPStatus.OK, response.get('statusCode'))
+            self.assertEqual(6, new_place_user.get('userId'))
+            self.assertEqual(body['placeId'], new_place_user.get('placeId'))
+        except Exception as exc:
+            self.fail(exc)
+        finally:
+            logger.info(response_body)
+
 
