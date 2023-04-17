@@ -16,7 +16,7 @@ logger = logging.getLogger('api')
 
 @ResponseHandler.api
 def lambda_handler(event, context):
-    token = event[ConstAWS.PATH_PARAMETERS]
+    token = event[ConstAWS.PATH_PARAMETERS].get("token")
 
     google_info = get_google_info(token)
 
