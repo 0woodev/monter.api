@@ -69,7 +69,10 @@ def build_fail_response(err):
             monter_response_body = {
                 'statusCode': result_code.status_code,
                 'message': result_code.message,
-                'error': result_code.status_code_string
+                'error': {
+                    "name": err.__class__.__name__,
+                    "cause": err.__str__()
+                }
             }
 
             response[ConstHttp.STATUS_CODE] = result_code.status_code

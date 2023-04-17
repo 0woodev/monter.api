@@ -3,7 +3,17 @@ import logging
 
 logger = logging.getLogger("api.const")
 
-JWT_SECRET_KEY = os.environ.get('jwt_secret_key', "12345678901234567890123456789012")
+# 64 encoded 32 bytes key
+JWT_SECRET_KEY = os.environ.get('jwt_secret_key', "not-assigned")
+try:
+    if JWT_SECRET_KEY == 'not-assigned':
+        jwt_secret_key_file_name = os.path.join(os.path.dirname(__file__), "../../env/jwt_secret_key.txt")
+        jwt_secret_key_file_name = os.path.abspath(jwt_secret_key_file_name)
+        f = open(jwt_secret_key_file_name, "r")
+        JWT_SECRET_KEY = f.read().strip().strip("\"")
+        f.close()
+except:
+    logger.exception("read jwt secret key error")
 JWT_BYTE_SECRET_KEY: bytes = bytes(JWT_SECRET_KEY, 'utf-8')
 
 
