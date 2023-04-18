@@ -16,6 +16,7 @@ def _api_handler(func):
             response_data = func(event, context)
             response = build_response(response_data)
         except Exception as exc:
+            logger.exception(exc)
             response = build_fail_response(exc)
 
         return response
