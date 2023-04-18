@@ -12,12 +12,13 @@ class Test(TestCase):
 
         try:
             token = generate_jwt_token(user_id, name)
-
+            print(token)
         except Exception as exc:
             self.fail(exc)
 
     def test_decode_jwt_token(self):
-        sample_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0YmQtYWxwaGEudmVyY2VsLmFwcC8iLCJpYXQiOjE2ODE0NTIxOTAuNTI3Nzc1LCJleHAiOjE2ODE1Mzg1OTAuNTI3Nzc1LCJpZCI6NiwibmFtZSI6ImFuZHkgbmFtIn0.HUH2-wUJt6IJFI4hKMFPOkaOK3CB1qfMJGriCwXgKF8'
+        # if sample token is invalid, make new token through above test code, and then switch
+        sample_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ0YmQtYWxwaGEudmVyY2VsLmFwcC8iLCJpYXQiOjE2ODE3ODY5MjQuNTcwNTA2LCJleHAiOjE2ODE4NzMzMjQuNTcwNTA2LCJpZCI6NiwibmFtZSI6ImFuZHkgbmFtIn0.WEl4pAafgnjSWs9CL2iLgMVbn--07xEtPWEKVSfz4Tw'
 
         expect_user_id = 6
         expect_name = 'andy nam'

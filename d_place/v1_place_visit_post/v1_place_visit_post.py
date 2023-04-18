@@ -18,8 +18,8 @@ def lambda_handler(event, context):
     user_id = get_requester_id(event)
     place_id, solved_log, visited_at, color_hex = get_body_contents(event)
 
-    is_today_first_visit = check_user_visit_or_not_today(user_id, place_id, visited_at)
-    if not is_today_first_visit:
+    is_first_visit = check_duplex_visit(user_id, place_id, visited_at)
+    if not is_first_visit:
         raise MonterException(CommonResultCode.RESOURCE_ALREADY_EXIST, None, '금일 해당 클라이밍장에 방문한 기록이 있습니다.')
 
     saved_log = add_new_visit_log(color_hex, place_id, solved_log, user_id, visited_at)
@@ -48,7 +48,7 @@ def add_new_visit_log(color_hex, place_id, solved_log, user_id, visited_at):
         raise MonterException(CommonResultCode.MONTER_UNEXPECTED_ERROR, exc, '방문기록에 문제가 발생했습니다')
 
 
-def check_user_visit_or_not_today(user_id: int, place_id: int, visited_at: str):
+def check_duplex_visit(user_id: int, place_id: int, visited_at: str):
     try:
         if visited_at.endswith("GMT"):
             # "Thu, 20 Apr 2023 15:51:13 GMT"
