@@ -77,7 +77,7 @@ def check_user_visit_or_not_today(user_id: int, place_id: int, visited_at: str):
 
         return check_visit_query_response[0].get('cnt') == 0
     except MonterException as exc:
-
+        raise exc
     except Exception as exc:
         raise MonterException(CommonResultCode.MONTER_UNEXPECTED_ERROR, exc, '유저의 중복방문 체크 시 에러 발생')
 
