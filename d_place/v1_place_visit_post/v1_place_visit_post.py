@@ -48,9 +48,16 @@ def add_new_visit_log(color_hex, place_id, solved_log, user_id, visited_at):
         raise MonterException(CommonResultCode.MONTER_UNEXPECTED_ERROR, exc, '방문기록에 문제가 발생했습니다')
 
 
-def check_user_visit_or_not_today(user_id, place_id, visited_at):
+def check_user_visit_or_not_today(user_id: int, place_id: int, visited_at: str):
     try:
-        visited_date = datetime.strptime(visited_at, '%Y-%m-%d %H:%M:%S').date().isoformat()
+        if visited_at.endswith("GMT"):
+            # "Thu, 20 Apr 2023 15:51:13 GMT"
+            visited_date = datetime.strptime(visited_at, "%a, %d %b %Y %H:%M:%S %Z").date().isoformat()
+        else:
+            # 2023-04-20 15:51:13
+            visited_date = datetime.strptime(visited_at, '%Y-%m-%d %H:%M:%S').date().isoformat()
+
+
         check_visit_or_not_query = '''
             SELECT COUNT(*) as cnt
             FROM place_to_user
@@ -69,6 +76,8 @@ def check_user_visit_or_not_today(user_id, place_id, visited_at):
             raise MonterException(CommonResultCode.MONTER_UNEXPECTED_ERROR, None, '방문기록 조회에 실패했습니다')
 
         return check_visit_query_response[0].get('cnt') == 0
+    except MonterException as exc:
+
     except Exception as exc:
         raise MonterException(CommonResultCode.MONTER_UNEXPECTED_ERROR, exc, '유저의 중복방문 체크 시 에러 발생')
 
