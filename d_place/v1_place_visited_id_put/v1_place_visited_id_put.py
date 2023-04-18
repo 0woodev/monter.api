@@ -26,6 +26,7 @@ def lambda_handler(event, context):
         UPDATE "place_to_user"
         SET {update_data_str}
         WHERE "place_to_user".id = %s
+            AND "place_to_user"."isDeleted" = false
         RETURNING *
     '''
 
@@ -43,6 +44,15 @@ def get_body_contents(event) -> dict:
     body_dict = Json.to_dict(event['body'])
 
     if "placeId" in body_dict:
-        raise MonterException(CommonResultCode.INVALID_BODY_CONTENTS, None, "방문 장소는 수정할 수 없습니다")
+        raise MonterException(CommonResultCode.INVALID_BODY_CONTENTS, None, "방문 장소(placeId)는 수정할 수 없습니다")
+    if "userId" in body_dict:
+        raise MonterException(CommonResultCode.INVALID_BODY_CONTENTS, None, "userId 는 수정할 수 없습니다")
+    if "id" in body_dict:
+        raise MonterException(CommonResultCode.INVALID_BODY_CONTENTS, None, "id 는 수정할 수 없습니다")
+    if "createdAt" in body_dict:
+        raise MonterException(CommonResultCode.INVALID_BODY_CONTENTS, None, "생성 시간(createdAt)는 수정할 수 없습니다")
+    if "updatedAt" in body_dict:
+        raise MonterException(CommonResultCode.INVALID_BODY_CONTENTS, None, "수정 시간(updatedAt)는 수정할 수 없습니다")
+
 
     return body_dict
