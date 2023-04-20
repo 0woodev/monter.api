@@ -57,6 +57,13 @@ paths:
       security:
         - Authorization:
             - global
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "수정하고자 하는 방문기록의 id"
+          required: true
+          schema:
+            type: "string"
     delete:
       tags:
         - Place
@@ -131,13 +138,13 @@ paths:
       responses:
         200:
           description: "success"
-    parameters:
-      - name: "token"
-        in: "path"
-        description: "구글 access token"
-        required: true
-        schema:
-          type: "string"
+      parameters:
+        - name: "token"
+          in: "path"
+          description: "구글 access token"
+          required: true
+          schema:
+            type: "string"
   /place/visit:
     post:
       tags:
@@ -154,6 +161,11 @@ paths:
           description: "[400] 필요한 값이 없는 경우 (placeId, solvedLog, visitedAt, colorHex)"
         RESOURCE_ALREADY_EXIST:
           description: "[400] 해당 클라이밍장을 동일한 날에 방문한 기록이 있는 경우 (중복방문)"
+      parameters:
+        - in: "body"
+          required: true
+          schema:
+            $ref: "#/components/schemas/PlaceVisitPost"
       security:
         - Authorization:
             - global
@@ -174,3 +186,37 @@ paths:
       security:
         - Authorization:
             - global
+components:
+  securitySchemes:
+    Authorization:
+      type: "apiKey"
+      name: "Authorization"
+      in: "header"
+      description: "'Bearer {jwt_token}' 형태로 입력하세요"
+  schemas:
+    DefaultResponse:
+
+    PlaceVisitPost:
+      title: "PlaceVisitPostDto"
+      description: "방문기록 생성 body"
+      required:
+        - placeId
+        - solvedLog
+        - visitedAt
+        - colorHex
+      properties:
+        placeId:
+          type: "integer"
+          format: "int64"
+        solvedLog:
+          type: "string"
+          default: "❤️️️️️️❤️️️️️️"
+        visitedAt:
+          type: "string"
+          default: "Thu, 20 Apr 2023 15:51:13 GMT"
+          description: "Thu, 20 Apr 2023 15:51:13 GMT 혹은 2023-04-20 15:51:13 두 형태만 허용"
+        colorHex:
+          type: "string"
+          default: "#35357"
+
+
