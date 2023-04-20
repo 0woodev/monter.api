@@ -23,9 +23,6 @@ def authorizer(func):
 
             return func(event, context)
         except MonterException as exc:
-            if exc.result_code == CommonResultCode.UNAUTHORIZED:
-                raise MonterException(CommonResultCode.UNAUTHORIZED, exc, data=exc.data)
-
             raise exc
         except Exception as exc:
             raise exc
