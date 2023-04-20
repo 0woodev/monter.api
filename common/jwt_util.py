@@ -31,7 +31,7 @@ def generate_jwt_token(user_id, name):
         prepare_encrypt()
 
         issue_at = datetime.now() - timedelta(minutes=1)
-        expire_at = issue_at + timedelta(days=1)
+        expire_at = issue_at + timedelta(days=30)
 
         payload = {
             # registered claim
