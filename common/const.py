@@ -90,3 +90,5 @@ class MonterResponseBody:
 
 
 GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v1/userinfo"
+
+NEW_USER_NAME_PREFIX = '__FIX_REQUIRED_MONTER__'

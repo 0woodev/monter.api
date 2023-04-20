@@ -5,7 +5,7 @@ import requests
 from common.CommonResultCode import CommonResultCode
 from common.Json import Json
 from common.MonterException import MonterException
-from common.const import ConstAWS, GOOGLE_USERINFO_URL
+from common.const import ConstAWS, GOOGLE_USERINFO_URL, NEW_USER_NAME_PREFIX
 from common.jwt_util import generate_jwt_token
 from common.pg_util import pg_util
 from common.response_handler import ResponseHandler
@@ -20,7 +20,8 @@ def lambda_handler(event, context):
 
     google_info = get_google_info(token)
 
-    name = google_info.get('name')
+    google_name = google_info.get('name')
+    name = f'{NEW_USER_NAME_PREFIX}{google_name}'
     picture = google_info.get('picture')
     email = google_info.get('email')
     google_id = google_info.get('id')
