@@ -27,7 +27,7 @@ def lambda_handler(event, context):
     if 'visitedAt' in update_attributes:
         is_duplex_visit = check_duplex_visit(visit_log_id, body['visitedAt'])
         if is_duplex_visit:
-            raise MonterException(CommonResultCode.INVALID_BODY_CONTENTS, None, '같은 장소에 같은 날짜에 방문한 기록이 있습니다')
+            raise MonterException(CommonResultCode.RESOURCE_ALREADY_EXIST, None, '같은 장소에 같은 날짜에 방문한 기록이 있습니다')
 
     update_query = f'''
         UPDATE "place_to_user"
@@ -42,7 +42,7 @@ def lambda_handler(event, context):
     )
 
     if len(update_query_response) == 0:
-        raise MonterException(CommonResultCode.RESOURCE_NOT_FOUND, None, "해당하는 방문기록이 없습니다")
+        raise MonterException(CommonResultCode.MONTER_UNEXPECTED_ERROR, None, "수정이 정상적으로 되지 않았습니다")
     else:
         return update_query_response[0]
 
