@@ -1,0 +1,176 @@
+openapi: "3.0.1"
+info:
+  title: "Monter API Documentation"
+  description: "Worker: [0woodev](https://github.com/0woodev)"
+  version: "2023-04-20 21:30:00UTC"
+servers:
+  - url: "https://682gu7au9i.execute-api.ap-northeast-2.amazonaws.com/dev"
+    variables:
+      basePath:
+        default: "dev"
+        enum:
+          - "dev"
+          - "stage"
+tags:
+  - name: Place
+    description: place 관련 API
+
+  - name: User
+    description: user 관련 API
+
+  - name: Auth
+    description: auth 관련 API
+
+  - name: GET
+    description: http method 가 GET 인 API
+
+  - name: POST
+    description: http method 가 POST 인 API
+
+  - name: PUT
+    description: http method 가 PUT 인 API
+
+  - name: DELETE
+    description: http method 가 DELETE 인 API
+
+
+paths:
+  /place/visited/{id}:
+    put:
+      tags:
+        - Place
+        - PUT
+      summary: "Edit VisitLog"
+      description:
+        "path 의 {id} 에 해당하는 place_to_user(방문기록)의 정보를 수정합니다."
+      responses:
+        200:
+          description: "success"
+        401:
+          description: "jwt 토큰이 문제가 있는 경우"
+        INVALID_BODY_CONTENTS:
+          description: "[400] 수정할 수 없는 데이터를 넣는 경우 (placeId, userId, id, createdAt, updatedAt)"
+        RESOURCE_ALREADY_EXIST:
+          description: "[400] 해당 클라이밍장을 동일한 날에 방문한 기록이 있는 경우 (중복방문)"
+        RESOURCE_NOT_FOUND:
+          description: "[400] {id} 에 해당하는 방문기록이 없는 경우"
+      security:
+        - Authorization:
+            - global
+    delete:
+      tags:
+        - Place
+        - DELETE
+      summary: "Delete visitLog"
+      description:
+        "path 의 {id} 에 해당하는 place_to_user(방문기록)의 정보를 삭제합니다."
+      responses:
+        200:
+          description: "success"
+        401:
+          description: "jwt 토큰이 문제가 있는 경우"
+        RESOURCE_NOT_FOUND:
+          description: "[400] {id} 에 해당하는 방문기록이 없는 경우 & 삭제가 정상적으로 되지 않은 경우"
+      security:
+        - Authorization:
+            - global
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "삭제하고자 하는 방문기록의 id"
+          required: true
+          schema:
+            type: "string"
+  /auth/google:
+    get:
+      tags:
+        - GET
+        - Auth
+      summary: "redirect to 'home'"
+      description: "현재는 네이버로 가게 되어 있습니다"
+      responses:
+        302:
+          description: "redirect"
+  /place/list:
+    get:
+      tags:
+        - GET
+        - Place
+      summary: "Get all places"
+      description: "모든 클라이밍장을 조회합니다"
+      responses:
+        200:
+          description: "success"
+
+  /place/visited/{name}:
+    get:
+      tags:
+        - GET
+        - Place
+      summary: "Get all specific user's visit log"
+      responses:
+        200:
+          description: "success"
+        RESOURCE_NOT_FOUND:
+          description: "[400] 해당하는 name 을 가진 유저가 없는 경우"
+      security:
+        - Authorization:
+            - global
+      parameters:
+        - name: "name"
+          in: "path"
+          description: "조회하고자 하는 유저의이름"
+          required: true
+          schema:
+            type: "string"
+  /auth/google/{token}:
+    post:
+      tags:
+        - POST
+        - Auth
+      responses:
+        200:
+          description: "success"
+    parameters:
+      - name: "token"
+        in: "path"
+        description: "구글 access token"
+        required: true
+        schema:
+          type: "string"
+  /place/visit:
+    post:
+      tags:
+        - POST
+        - Place
+      summary: Add new visit log
+      description: 새로운 방문기록을 추가합니다. (중복방문 허용 안됨)
+      responses:
+        200:
+          description: "success"
+        401:
+          description: "jwt 토큰이 문제가 있는 경우"
+        INVALID_BODY_CONTENTS:
+          description: "[400] 필요한 값이 없는 경우 (placeId, solvedLog, visitedAt, colorHex)"
+        RESOURCE_ALREADY_EXIST:
+          description: "[400] 해당 클라이밍장을 동일한 날에 방문한 기록이 있는 경우 (중복방문)"
+      security:
+        - Authorization:
+            - global
+  /user:
+    put:
+      tags:
+        - PUT
+        - User
+      summary: "Edit user information"
+      description: "유저정보를 수정합니다"
+      responses:
+        200:
+          description: "success"
+        401:
+          description: "jwt 토큰이 문제가 있는 경우"
+        INVALID_BODY_CONTENTS:
+          description: "[400] 수정할 수 없는 데이터를 넣는 경우 (id, createdAt, updatedAt, googleId) & {id} 에 해당하는 유저가 없는 경우"
+      security:
+        - Authorization:
+            - global
