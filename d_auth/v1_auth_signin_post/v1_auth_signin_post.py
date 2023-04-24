@@ -1,5 +1,7 @@
 import logging
 
+import bcrypt
+
 from common.CommonResultCode import CommonResultCode
 from common.Json import Json
 from common.MonterException import MonterException
@@ -28,7 +30,10 @@ def lambda_handler(event, context):
         raise MonterException(CommonResultCode.RESOURCE_NOT_FOUND, None, "가입정보가 없습니다. 입력된 정보를 확인해주세요.")
 
     user = list(user)[0]
-    if user['password'] != password:
+    user_password_from_db = user['password'].encode('utf-8')
+    input_password_from_client = password.encode('utf-8')
+
+    if bcrypt.checkpw(input_password_from_client, user_password_from_db) is False:
         raise MonterException(CommonResultCode.INVALID_BODY_CONTENTS, None, "비밀번호가 틀렸습니다")
 
     token = generate_jwt_token(user["id"], user['name'])

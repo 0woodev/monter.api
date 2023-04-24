@@ -1,5 +1,7 @@
 import logging
 
+import bcrypt
+
 from common.CommonResultCode import CommonResultCode
 from common.Json import Json
 from common.MonterException import MonterException
@@ -27,15 +29,20 @@ def lambda_handler(event, context):
     if is_exist_user:
         raise MonterException(CommonResultCode.RESOURCE_ALREADY_EXIST, None, '동일한 ID가 존재합니다')
 
+    user_salt_bytes = bcrypt.gensalt()
+    encrypted_password_bytes = bcrypt.hashpw(password.encode('utf-8'), user_salt_bytes)
+
+    user_salt_str = str(user_salt_bytes, "utf-8")
+    encrypted_password_str = str(encrypted_password_bytes, 'utf-8')
     query_insert_new_user = '''
-                INSERT INTO "user"(name, password)
-                VALUES (%s, %s)
+                INSERT INTO "user"(name, password, salt)
+                VALUES (%s, %s, %s)
                 RETURNING *
             '''
 
     insert_query_result = pg_util.execute_and_returning_query(
         query_insert_new_user,
-        (name, password)
+        (name, encrypted_password_str, user_salt_str)
     )
 
     user = list(insert_query_result)[0]
