@@ -12,7 +12,7 @@ logger = logging.getLogger("api.test.v1_auth_signup_post")
 class Test(TestCase):
     def test_signup_with_new_name(self):
         name = f'test_name_{datetime.now().timestamp()}'
-        password = f'password'
+        password = f'asdf'
 
         body = {
             'name': name,

@@ -47,7 +47,6 @@ class Test(TestCase):
         finally:
             logger.info(response)
 
-
     def test_signin_fail_with_wrong_password(self):
         name = f'test_name_hi'
         password = f'password1'
