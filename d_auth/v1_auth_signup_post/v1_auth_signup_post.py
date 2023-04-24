@@ -28,14 +28,14 @@ def lambda_handler(event, context):
         raise MonterException(CommonResultCode.RESOURCE_ALREADY_EXIST, None, '동일한 ID가 존재합니다')
 
     query_insert_new_user = '''
-                INSERT INTO "user"(name, password, reference, agent)
-                VALUES (%s, %s, %s, %s)
+                INSERT INTO "user"(name, password)
+                VALUES (%s, %s)
                 RETURNING *
             '''
 
     insert_query_result = pg_util.execute_and_returning_query(
         query_insert_new_user,
-        (name, password, body.get('reference'), body.get('agent'))
+        (name, password)
     )
 
     user = list(insert_query_result)[0]
