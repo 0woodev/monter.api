@@ -29,7 +29,7 @@ def init_json_response():
     }
 
 
-def build_response(response_object: dict):
+def build_response(response_object):
     try:
         response = init_json_response()
 

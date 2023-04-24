@@ -19,16 +19,18 @@ def lambda_handler(event, context):
         SELECT *
         FROM "user"
         WHERE "user"."name" = %s
-            AND "user".password = %s
     '''
 
-    user = list(pg_util.execute_query(query_select_user_by_name, (name, password)))
+    user = list(pg_util.execute_query(query_select_user_by_name, (name,)))
 
     is_exist_user = len(user) != 0
     if not is_exist_user:
-        raise MonterException(CommonResultCode.RESOURCE_ALREADY_EXIST, None, "해당하는")
+        raise MonterException(CommonResultCode.RESOURCE_NOT_FOUND, None, "가입정보가 없습니다. 입력된 정보를 확인해주세요.")
 
     user = list(user)[0]
+    if user['password'] != password:
+        raise MonterException(CommonResultCode.INVALID_BODY_CONTENTS, None, "비밀번호가 틀렸습니다")
+
     token = generate_jwt_token(user["id"], user['name'])
 
     return {
