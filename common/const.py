@@ -16,6 +16,19 @@ except:
     logger.exception("read jwt secret key error")
 JWT_BYTE_SECRET_KEY: bytes = bytes(JWT_SECRET_KEY, 'utf-8')
 
+ENCRYPT_KEY = os.environ.get('encrypt_key', 'not-assigned')
+try:
+    if ENCRYPT_KEY == 'not-assigned':
+        ENCRYPT_KEY_file_name = os.path.join(os.path.dirname(__file__), "../../env/encrypt_key.txt")
+        ENCRYPT_KEY_file_name = os.path.abspath(ENCRYPT_KEY_file_name)
+        f = open(ENCRYPT_KEY_file_name, "r")
+        ENCRYPT_KEY = f.read().strip().strip("\"")
+        f.close()
+except:
+    logger.exception("read jwt secret key error")
+    ENCRYPT_KEY = None
+
+
 
 class Postgres:
     ENDPOINT = os.environ.get('postgres_endpoint', 'not-assigned')
