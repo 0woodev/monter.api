@@ -30,6 +30,9 @@ def lambda_handler(event, context):
         FROM place_to_user
         WHERE place_to_user."userId" = %s
             AND place_to_user."isDeleted" = false
+        ORDER BY
+            place_to_user."visitedAt" DESC,
+            place_to_user."createdAt" DESC;
     '''
     visit_logs = pg_util.execute_query(select_target_user_query, (user.get("id"),))
 
