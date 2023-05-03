@@ -18,7 +18,7 @@ def authorizer(func):
             data = decode_jwt_token(token=token)
 
             event['requestContext'] = {
-                'authorizer': {'id': data["id"]}
+                'authorizer': {'id': data["id"], 'name': data["name"]}
             }
 
             return func(event, context)
@@ -67,3 +67,16 @@ def get_requester_id(event):
         raise MonterException(CommonResultCode.INTERNAL_SERVICE_ERROR, None, 'authorizer 에 id 가 없습니다')
 
     return event['requestContext']['authorizer']['id']
+
+
+def get_requester_name(event):
+    if 'requestContext' not in event:
+        raise MonterException(CommonResultCode.INTERNAL_SERVICE_ERROR, None, 'event 의 requestContext 가 없습니다')
+
+    if 'authorizer' not in event['requestContext']:
+        raise MonterException(CommonResultCode.INTERNAL_SERVICE_ERROR, None, 'requestContext 의 authorizer 가 없습니다')
+
+    if 'name' not in event['requestContext']['authorizer']:
+        raise MonterException(CommonResultCode.INTERNAL_SERVICE_ERROR, None, 'authorizer 에 id 가 없습니다')
+
+    return event['requestContext']['authorizer']['name']
