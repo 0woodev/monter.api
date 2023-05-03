@@ -27,7 +27,7 @@ def lambda_handler(event, context):
     update_query = f'''
         UPDATE "user"
         SET verified = %s
-        WHERE "user".name = %s
+        WHERE "user".id = %s
         RETURNING id, name, verified
     '''
 
