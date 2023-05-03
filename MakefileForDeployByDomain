@@ -7,7 +7,7 @@ t%:
 	$(eval target=$(subst t,,$@))
 	cd ../../terraform && make ${target}
 
-sync: build tapplyq
+sync: build tapplyq-workspace
 rebuild: clean build
 
 build: common.chk
@@ -26,7 +26,7 @@ clean:
 
 common.chk common.md5 logger_util.chk logger_util.md5:
 	$(info -------------------------------------------- $@)
-	@find ./common -maxdepth 6 -mindepth 1 -type f \
+	@find ../common -maxdepth 6 -mindepth 1 -type f \
 ! -path '*/test/*' \
 ! -name 'test_*' \
 ! -name '*.md5' \

@@ -23,7 +23,7 @@ rebuild:
 health-test:
 
 sync-test: build tapplyq health-test
-sync: build tapplyq
+sync: build tapplyq-workspace
 
 link-makefile:
 clear-makefile:

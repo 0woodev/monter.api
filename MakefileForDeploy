@@ -29,7 +29,7 @@ upload: build
 	./upload.sh
 
 sync: build
-	cd ../.. && make tapplyq
+	cd ../.. && make tapplyq-workspace
 
 build: build-diff layer-diff
 	$(info "----------------- start --------------------" $@)
