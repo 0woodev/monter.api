@@ -57,7 +57,7 @@ def build_fail_response(err):
             monter_response_body = {
                 'statusCode': result_code.status_code,
                 'message': err.data,
-                'error': result_code.status_code_string
+                'error': result_code.status_code_string if err.exception is None else err.exception.__class__
             }
             response[ConstHttp.STATUS_CODE] = result_code.status_code
             response[ConstHttp.BODY] = Json.to_json_string(monter_response_body)

@@ -7,8 +7,8 @@ from common.jwt_util import generate_jwt_token, decode_jwt_token
 
 class Test(TestCase):
     def test_generate_jwt_token(self):
-        user_id = 6
-        name = 'andy nam'
+        user_id = 75
+        name = '0_0woo__'
 
         try:
             token = generate_jwt_token(user_id, name)
