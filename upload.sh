@@ -13,9 +13,11 @@ echo "${module_name}"
 #echo "${module_name}"
 #cat ../../../aws_account/project_name.txt
 project_name=$(cat ${ROOT_DIR}/env/project_name.txt)
+workspace=$(cat ${ROOT_DIR}/env/workspace.txt)
 echo ${project_name}
+echo ${workspace}
 
-echo ${project_name}_${module_name}
+echo ${workspace}_${project_name}_${module_name}
 echo ${PWD}/dist/build.zip
 
 #/Users/ihsong/Work/classu/backend.infra/python/authentication/v1_authorizer/dist/build.zip
