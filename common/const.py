@@ -100,9 +100,9 @@ class ConstHttp:
 
 
 class ConstTwilio:
-    ACCOUNT_SID = get_os_or_file('ACCOUNT_SID', 'account_sid')
-    AUTH_TOKEN = get_os_or_file('AUTH_TOKEN', 'auth_token')
-    FROM = get_os_or_file('FROM', 'from')
+    ACCOUNT_SID = get_os_or_file('account_sid', 'account_sid')
+    AUTH_TOKEN = get_os_or_file('auth_token', 'auth_token')
+    FROM = get_os_or_file('from', 'from')
 
     MESSAGE_FORMAT = '[monter climber] 인증번호 {code}'
 
