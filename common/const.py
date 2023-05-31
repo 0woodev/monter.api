@@ -3,6 +3,20 @@ import logging
 
 logger = logging.getLogger("api.const")
 
+
+def get_os_or_file(env_name, filename):
+    env = os.environ.get(env_name, 'not-assigned')
+
+    if env == 'not-assigned':
+        file = os.path.join(os.path.dirname(__file__), f"../../env/{filename}.txt")
+        file = os.path.abspath(file)
+        f = open(file, "r")
+        env = f.read().strip().strip("\"")
+        f.close()
+
+    return env
+
+
 # 64 encoded 32 bytes key
 JWT_SECRET_KEY = os.environ.get('jwt_secret_key', "not-assigned")
 try:
@@ -17,6 +31,7 @@ except:
 JWT_BYTE_SECRET_KEY: bytes = bytes(JWT_SECRET_KEY, 'utf-8')
 
 ENCRYPT_KEY = os.environ.get('encrypt_key', 'not-assigned')
+
 
 class Postgres:
     ENDPOINT = os.environ.get('postgres_endpoint', 'not-assigned')
@@ -82,6 +97,14 @@ class ConstHttp:
     IS_BASE_64_ENCODED = "isBase64Encoded"
     APPLICATION_JSON = "application/json"
     BODY = "body"
+
+
+class ConstTwilio:
+    ACCOUNT_SID = get_os_or_file('ACCOUNT_SID', 'account_sid')
+    AUTH_TOKEN = get_os_or_file('AUTH_TOKEN', 'auth_token')
+    FROM = get_os_or_file('FROM', 'from')
+
+    MESSAGE_FORMAT = '[monter climber] 인증번호 {code}'
 
 
 class MonterResponseBody:

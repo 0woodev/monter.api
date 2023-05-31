@@ -5,7 +5,7 @@ from common.ResultCode import ResultCode
 
 
 class CommonResultCode(ResultCode, Enum):
-
+    TWILIO_SEND_SMS_ERROR = (HTTPStatus.BAD_REQUEST, "TWILIO_SEND_SMS_ERROR", 'twilio sending sms error')
     INVALID_USER_NAME = (HTTPStatus.BAD_REQUEST, "USER_NAME_SYNC_ERROR", 'insta and monter user name is different')
     SUCCESS = (HTTPStatus.OK, "SUCCESS", "success")
     UNAUTHORIZED = (HTTPStatus.UNAUTHORIZED, "UNAUTHORIZED", "request unauthorized")
