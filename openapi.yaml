@@ -4,13 +4,7 @@ info:
   description: "Worker: [0woodev](https://github.com/0woodev)"
   version: "2023-04-20 21:30:00UTC"
 servers:
-  - url: "https://682gu7au9i.execute-api.ap-northeast-2.amazonaws.com/dev"
-    variables:
-      basePath:
-        default: "dev"
-        enum:
-          - "dev"
-          - "stage"
+  - url: "https://5g7vyrifn4.execute-api.ap-northeast-2.amazonaws.com/api"
 tags:
   - name: Place
     description: place 관련 API
@@ -98,6 +92,39 @@ paths:
       responses:
         302:
           description: "redirect"
+  /auth/sms/code:
+    post:
+      tags:
+        - POST
+        - Auth
+      summary: "sms 를 통한 인증 API 입니다"
+      description: "검증은 프론트에서 진행합니다"
+      responses:
+        200:
+          description: "success"
+      parameters:
+        - in: "body"
+          required: true
+          schema:
+            $ref: "#/components/schemas/SmsCodeDTO"
+
+  /auth/phone:
+    post:
+      tags:
+        - POST
+        - Auth
+      summary: "휴대폰을 통한 token 발급 API 입니다"
+      description: ""
+      responses:
+        200:
+          description: "success"
+      parameters:
+        - in: "body"
+          required: true
+          schema:
+            $ref: "#/components/schemas/LoginViaPhoneDTO"
+
+
   /place/list:
     get:
       tags:
@@ -196,6 +223,28 @@ components:
   schemas:
     DefaultResponse:
 
+    SmsCodeDTO:
+      title: "SmsCodeDTO"
+      description: "4자리 난수를 받기위한 BODY"
+      required:
+        - phoneNo
+      properties:
+        phoneNo:
+          type: "string"
+          default: "010-1234-1234"
+    LoginViaPhoneDTO:
+      title: "LoginViaPhoneDTO"
+      description: "인스타 아이디와 휴대폰으로 할때 body"
+      required:
+        - name
+        - phoneNo
+      properties:
+        name:
+          type: "string"
+          default: "froglimber"
+        phoneNo:
+          type: "string"
+          default: "010-1234-1234"
     PlaceVisitPost:
       title: "PlaceVisitPostDto"
       description: "방문기록 생성 body"
